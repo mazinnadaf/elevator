@@ -1,3 +1,23 @@
+/*Features Implemented
+    - Single elevator with directional scheduling (up/down queues)
+    - Dynamic requests while moving
+    - Capacity limit (max 5 passengers)
+    - Idle optimization (waits when no requests)
+    - 5% chance per floor for elevator malfunction
+    - Elevator tracks current direction to optimize floor servicing
+    - Threaded simulation
+Assumptions
+    - Building has n floors numbered from 1 to n
+    - Elevator starts at floor 1
+    - Each request represents one person
+    - Console-based simulation (no GUI)
+    - Elevator moves one floor at a time with small delays
+Features Not Yet Implemented
+    - Multiple elevators
+    - GUI / visual display
+    - Advanced scheduling algorithms beyond basic up/down queues
+    - Prioritization by waiting time or passenger type*/
+
 import java.util.PriorityQueue;
 
 public class Elevator implements Runnable {
@@ -22,10 +42,12 @@ public class Elevator implements Runnable {
         this.downQueue = new PriorityQueue<>((a, b) -> b - a); 
     }
 
+    // Stops the elevator thread
     public void stopElevator() {
         running = false;
     }
 
+    // Adds a new floor request and updates current load
     public synchronized void requestFloor(int floor) {
         if (floor < 1 || floor > numFloors) {
             System.out.println("Invalid floor: " + floor);
@@ -51,6 +73,7 @@ public class Elevator implements Runnable {
         }
     }    
 
+    // Main elevator loop: moves the elevator according to queues and direction
     @Override
     public void run() {
         while (running) {
@@ -87,6 +110,7 @@ public class Elevator implements Runnable {
         System.out.println("Elevator stopped.");
     }
     
+    // Moves elevator to target floor, handles arrival, load, and random malfunctions
     private void moveToFloor(int target) {
         while (currentFloor < target) {
             currentFloor++;
